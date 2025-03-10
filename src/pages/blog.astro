@@ -1,0 +1,38 @@
+---
+import { getClient } from '../lib/graphqlClient';
+import { gql } from 'graphql-request';
+
+const client = getClient();
+const query = gql`
+  {
+    user(username: "nik-l") {
+      publication {
+        posts(page: 0) {
+          title
+          brief
+          slug
+        }
+      }
+    }
+  }
+`;
+const data = await client.request(query);
+const posts = data.user.publication.posts;
+---
+
+<html>
+<head>
+    <title>Blog</title>
+</head>
+<body>
+    <h1>Blog Posts</h1>
+    <ul>
+        {posts.map(post => (
+            <li key={post.slug}>
+                <a href={`/blog/${post.slug}`}>{post.title}</a>
+                <p>{post.brief}</p>
+            </li>
+        ))}
+    </ul>
+</body>
+</html>
